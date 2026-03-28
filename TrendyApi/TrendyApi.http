@@ -1,0 +1,6 @@
+@TrendyApi_HostAddress = http://localhost:5261
+
+GET {{TrendyApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

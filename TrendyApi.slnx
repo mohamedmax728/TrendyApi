@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Api/">
+    <Project Path="TrendyApi/TrendyApi.csproj" />
+  </Folder>
+  <Folder Name="/src/Core/">
+    <Project Path="Application/Application.csproj" Id="78a673ee-f69f-4472-8609-1b7a32d05511" />
+    <Project Path="Domain/Domain.csproj" Id="140f99f9-610e-4b9c-bb5f-66324c2d861a" />
+  </Folder>
+  <Folder Name="/src/Infrastructure/">
+    <Project Path="Persistence/Persistence.csproj" Id="98d9d503-66d8-4493-afd9-ce07bd99d88b" />
+  </Folder>
+</Solution>
