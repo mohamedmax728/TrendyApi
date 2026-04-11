@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 
 namespace Persistence.Repositories
 {
-    public class BaseRepository<T> : IAsyncRepository<T> where T : class
+    public class BaseRepository<T> : IBaseRepository<T> where T : class
     {
         protected readonly DbContext _context;
         protected readonly IConfigurationProvider _mapperConfig;
@@ -94,6 +94,11 @@ namespace Persistence.Repositories
         {
             _context.Set<T>().Remove(entity);
             return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> Exists(Expression<Func<T, bool>> filter)
+        {
+            return await _context.Set<T>().AnyAsync(filter);
         }
 
         private static IQueryable<T> ApplyIncludes(

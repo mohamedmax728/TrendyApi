@@ -15,7 +15,5 @@ namespace Domain.Entities
         public byte[] PasswordSalt { get; set; }
         public int RoleId { get; set; }
         public Role Role { get; set; }
-        public int CompanyId { get; set; }
-
     }
 }

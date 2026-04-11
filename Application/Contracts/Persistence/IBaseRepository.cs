@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace Application.Contracts.Persistence
 {
-    public interface IAsyncRepository<T> where T : class
+    public interface IBaseRepository<T> where T : class
     {
         Task<T?> GetAsync(
             Expression<Func<T, bool>> filter,
@@ -22,5 +22,6 @@ namespace Application.Contracts.Persistence
         Task<bool> AddAsync(T entity);
         Task<bool> UpdateAsync(T entity);
         Task<bool> DeleteAsync(T entity);
+        Task<bool> Exists(Expression<Func<T, bool>> filter);
     }
 }
