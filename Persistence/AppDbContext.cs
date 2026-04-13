@@ -2,6 +2,7 @@
 using Domain.Common;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Persistence.Configurations;
 
 namespace Persistence
 {
@@ -18,12 +19,15 @@ namespace Persistence
             _tenantProvider = tenantProvider;
         }
         public DbSet<Domain.Entities.User> Users { get; set; }
+        public DbSet<Domain.Entities.Role> Roles { get; set; }
+
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
                 optionsBuilder.UseSqlServer(
-                    "Server=sqlserver,1433;Database=TaskManagementDb;User Id=sa;Password=TaskMana!1;TrustServerCertificate=True;"
+                    "data source=DESKTOP-5RA9U4V\\SQLEXPRESS;integrated security=SSPI;initial catalog=TrndyApi;trustservercertificate=True;MultipleActiveResultSets=True;"
                 );
             }
         }
@@ -31,32 +35,12 @@ namespace Persistence
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
-            ConfigureUsers(modelBuilder);
-            ConfigureRoles(modelBuilder);
+            modelBuilder.ApplyConfiguration(new UserConfiguration(_tenantProvider));
+            modelBuilder.ApplyConfiguration(new RoleConfiguration(_tenantProvider));
+
             base.OnModelCreating(modelBuilder);
         }
-        private void ConfigureUsers(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<User>(builder =>
-            {
-                builder.HasKey(x => x.Id);
-                modelBuilder.Entity<Domain.Entities.User>()
-                .HasIndex(u => u.Email)
-                .IsUnique();
-                builder.HasIndex(x => x.CompanyId);
-                builder.HasQueryFilter(x => x.CompanyId == _tenantProvider.CompanyId);
-            });
-        }
-        private void ConfigureRoles(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Role>(builder =>
-            {
-                builder.Property(u => u.RoleCode)
-                       .HasConversion<string>();
-
-
-            });
-        }
+       
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
         {
