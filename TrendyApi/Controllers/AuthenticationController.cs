@@ -34,5 +34,29 @@ namespace TrendyApi.Controllers
 
             return Ok(result);
         }
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordRequestDto request)
+        {
+            var result = await _authenticationService.ForgotPasswordAsync(request);
+            if (!result.Success) return BadRequest(result);
+            return Ok(result);
+        }
+
+        [HttpPost("verify-otp")]
+        public async Task<IActionResult> VerifyOtp(VerifyOtpRequestDto request)
+        {
+            var result = await _authenticationService.VerifyOtpAsync(request);
+            if (!result.Success) return BadRequest(result);
+            return Ok(result);
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordRequestDto request)
+        {
+            var result = await _authenticationService.ResetPasswordAsync(request);
+            if (!result.Success) return BadRequest(result);
+            return Ok(result);
+        }
     }
 }

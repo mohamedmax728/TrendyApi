@@ -2,6 +2,7 @@
 using Domain.Common;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Persistence.Configrations;
 using Persistence.Configurations;
 
 namespace Persistence
@@ -20,6 +21,7 @@ namespace Persistence
         }
         public DbSet<Domain.Entities.User> Users { get; set; }
         public DbSet<Domain.Entities.Role> Roles { get; set; }
+        public DbSet<Domain.Entities.PasswordResetToken> PasswordResetTokens { get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -37,6 +39,8 @@ namespace Persistence
 
             modelBuilder.ApplyConfiguration(new UserConfiguration(_tenantProvider));
             modelBuilder.ApplyConfiguration(new RoleConfiguration(_tenantProvider));
+            modelBuilder.ApplyConfiguration(new PasswordResetTokenConfiguration());
+
 
             base.OnModelCreating(modelBuilder);
         }
