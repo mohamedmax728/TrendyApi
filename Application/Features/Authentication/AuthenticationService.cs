@@ -25,11 +25,26 @@ namespace Application.Features.Authentication
                     };
                 }
 
+                // Get Customer role by RoleCode instead of hardcoded ID
+                var customerRole = await _unitOfWork.RoleRepository.Value
+                    .GetAsync(x => x.RoleCode == Domain.Enums.RoleCodeEnum.Customer);
+
+                if (customerRole == null)
+                {
+                    return new BaseResponse
+                    {
+                        Success = false,
+                        Message = "Customer role not found.",
+                        ValidationErrors = new List<string> { "Customer role not configured in database." }
+                    };
+                }
+
                 PasswordMaker.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
                 var user = _mapper.Map<User>(request);
                 user.PasswordHash = passwordHash;
                 user.PasswordSalt = passwordSalt;
+                user.RoleId = customerRole.Id;
 
                 await _unitOfWork.UserRepository.Value.AddAsync(user);
                 await _unitOfWork.SaveChangesAsync();

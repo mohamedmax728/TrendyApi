@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
@@ -11,9 +12,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260424124924_Remove default value of role Id")]
+    partial class RemovedefaultvalueofroleId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -101,29 +104,6 @@ namespace Persistence.Migrations
                     b.HasIndex("CompanyId");
 
                     b.ToTable("Roles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CompanyId = 0,
-                            Name = "Admin",
-                            RoleCode = "Admin"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CompanyId = 0,
-                            Name = "Vendor",
-                            RoleCode = "Vendor"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CompanyId = 0,
-                            Name = "Customer",
-                            RoleCode = "Customer"
-                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>

@@ -29,7 +29,7 @@ namespace Persistence
             if (!optionsBuilder.IsConfigured)
             {
                 optionsBuilder.UseSqlServer(
-                    "data source=DESKTOP-5RA9U4V\\SQLEXPRESS;integrated security=SSPI;initial catalog=TrndyApi;trustservercertificate=True;MultipleActiveResultSets=True;"
+                    "data source=DESKTOP-5RA9U4V\\SQLEXPRESS;integrated security=SSPI;initial catalog=TrndyApiV2;trustservercertificate=True;MultipleActiveResultSets=True;"
                 );
             }
         }

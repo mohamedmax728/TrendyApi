@@ -19,7 +19,7 @@ namespace Persistence.Configurations
             builder.HasKey(x => x.Id);
             builder.HasIndex(u => u.Email).IsUnique();
             builder.HasIndex(x => x.CompanyId);
-            builder.Property(x => x.RoleId).HasDefaultValue(4);
+            // Removed default value from RoleId
             //builder.HasQueryFilter(x => x.CompanyId == _tenantProvider.CompanyId);
         }
     }
