@@ -1,4 +1,3 @@
-﻿using Application.Common.Abstractions;
 using Application.Common.Models;
 using Application.Contracts;
 using Application.Features.Authentication;
@@ -8,7 +7,6 @@ using Application.Features.Products.Services;
 using FluentValidation;
 using Persistence.Repositories;
 using System.Reflection;
-using TrendyApi.Services;
 
 namespace TrendyApi
 {
@@ -25,16 +23,8 @@ namespace TrendyApi
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             
-            // Register Product repository needed by ProductService (direct dependency)
-            services.AddScoped<IProductRepository, ProductRepository>();
-            
-            // Register Product services
+            // Register Product services - repositories are resolved via UnitOfWork lazy initialization
             services.AddScoped<IProductService, ProductService>();
-            services.AddScoped<ICategoryService, CategoryService>();
-
-            // Register image service
-            services.AddScoped<IImageService, ImageService>();
-            services.AddScoped<ImageService>();
 
             // Register validators
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());

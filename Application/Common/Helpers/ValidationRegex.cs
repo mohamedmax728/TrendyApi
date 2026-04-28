@@ -30,10 +30,22 @@
                 new Regex(@"^[a-zA-Z\s]+$", RegexOptions.Compiled);
 
             // =========================
+            // 🔹 English Letters, Numbers and Punctuation
+            // =========================
+            public static readonly Regex EnglishLettersAndNumbersAndPunctuation =
+                new Regex(@"^[a-zA-Z0-9\s.,!?'\-()&]+$", RegexOptions.Compiled);
+
+            // =========================
+            // 🔹 Arabic Letters, Numbers and Punctuation
+            // =========================
+            public static readonly Regex ArabicLettersAndNumbersAndPunctuation =
+                new Regex(@"^[\u0600-\u06FF\s0-9.,!?'\-()&]+$", RegexOptions.Compiled);
+
+            // =========================
             // 🔹 Strong Password
             // =========================
             public static readonly Regex StrongPassword =
-                new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$", RegexOptions.Compiled);
+                new Regex(@"^(?=.*[a-z])(?=.*[A-A-Z])(?=.*\d)(?=.*[\W_]).{8,}$", RegexOptions.Compiled);
 
             // =========================
             // 🔹 Helper Method

@@ -1,6 +1,114 @@
 @TrendyApi_HostAddress = http://localhost:5261
 
+### Health Check
 GET {{TrendyApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
+
+### Create Product with Images
+POST {{TrendyApi_HostAddress}}/product
+Content-Type: multipart/form-data
+
+--boundary
+Content-Disposition: form-data; name="ShortDescriptionEn"
+
+Premium Wireless Headphones
+--boundary
+Content-Disposition: form-data; name="ShortDescriptionAr"
+
+سماعة لاسلكية ممتازة
+--boundary
+Content-Disposition: form-data; name="FullDescriptionEn"
+
+High-quality wireless headphones with noise cancellation and 30-hour battery life. Perfect for music lovers and professionals.
+--boundary
+Content-Disposition: form-data; name="FullDescriptionAr"
+
+سماعة لاسلكية عالية الجودة مع إلغاء الضوضاء وعمر بطارية يصل إلى 30 ساعة. مثالية لعشاق الموسيقى والمحترفين.
+--boundary
+Content-Disposition: form-data; name="Price"
+
+299.99
+--boundary
+Content-Disposition: form-data; name="Discount"
+
+10.0
+--boundary
+Content-Disposition: form-data; name="Quantity"
+
+100
+--boundary
+Content-Disposition: form-data; name="CategoryId"
+
+1
+--boundary
+Content-Disposition: form-data; name="StoreId"
+
+1
+--boundary
+Content-Disposition: form-data; name="Images"; filename="image1.jpg"
+Content-Type: image/jpeg
+
+< ./test-image.jpg
+--boundary--
+
+###
+
+### Get All Products
+GET {{TrendyApi_HostAddress}}/product
+Accept: application/json
+
+###
+
+### Get Product by ID
+GET {{TrendyApi_HostAddress}}/product/1
+Accept: application/json
+
+###
+
+### Update Product
+PUT {{TrendyApi_HostAddress}}/product/1
+Content-Type: multipart/form-data
+
+--boundary
+Content-Disposition: form-data; name="ShortDescriptionEn"
+
+Updated Premium Headphones
+--boundary
+Content-Disposition: form-data; name="ShortDescriptionAr"
+
+سماعة محدثة
+--boundary
+Content-Disposition: form-data; name="FullDescriptionEn"
+
+Updated description
+--boundary
+Content-Disposition: form-data; name="FullDescriptionAr"
+
+وصف محدث
+--boundary
+Content-Disposition: form-data; name="Price"
+
+349.99
+--boundary
+Content-Disposition: form-data; name="Discount"
+
+15.0
+--boundary
+Content-Disposition: form-data; name="Quantity"
+
+50
+--boundary
+Content-Disposition: form-data; name="CategoryId"
+
+1
+--boundary
+
+###
+
+### Delete Product
+DELETE {{TrendyApi_HostAddress}}/product/1
 Accept: application/json
 
 ###

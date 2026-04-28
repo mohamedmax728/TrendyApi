@@ -1,5 +1,4 @@
 ﻿using Application.Common.Abstractions;
-using Application.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,3 +21,4 @@ namespace Persistence
         }
     }
 }
+

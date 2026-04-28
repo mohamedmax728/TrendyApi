@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
@@ -11,9 +12,11 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260426164953_Product")]
+    partial class Product
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -116,7 +119,7 @@ namespace Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CategoryId")
+                    b.Property<int?>("CategoryId")
                         .HasColumnType("int");
 
                     b.Property<int>("CompanyId")
@@ -129,12 +132,15 @@ namespace Persistence.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("DescriptionAr")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("DescriptionEn")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Image")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ModifiedBy")
@@ -156,7 +162,7 @@ namespace Persistence.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal?>("PriceAfterDiscount")
+                    b.Property<decimal>("PriceAfterDiscount")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("Quantity")
@@ -170,10 +176,11 @@ namespace Persistence.Migrations
                     b.Property<int?>("TrendMarkId")
                         .HasColumnType("int");
 
-                    b.Property<int>("VendorId")
+                    b.Property<int?>("VendorId")
                         .HasColumnType("int");
 
                     b.Property<string>("YouTubeLink")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -219,12 +226,10 @@ namespace Persistence.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("NameAr")
-                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("NameEn")
-                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
@@ -257,6 +262,10 @@ namespace Persistence.Migrations
 
                     b.Property<DateTime?>("CreatedDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
@@ -510,9 +519,7 @@ namespace Persistence.Migrations
                 {
                     b.HasOne("Domain.Entities.ProductCategory", "Category")
                         .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CategoryId");
 
                     b.HasOne("Domain.Entities.ProductCategory", "SubCategory")
                         .WithMany()
@@ -524,9 +531,7 @@ namespace Persistence.Migrations
 
                     b.HasOne("Domain.Entities.User", "Vendor")
                         .WithMany()
-                        .HasForeignKey("VendorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("VendorId");
 
                     b.Navigation("Category");
 

@@ -4,13 +4,13 @@ using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Persistence.Configurations
+namespace Persistence.Configrations
 {
-    public class RoleConfiguration : IEntityTypeConfiguration<Role>
+    public class RoleConfigration : IEntityTypeConfiguration<Role>
     {
         private readonly ITenantProvider _tenantProvider;
 
-        public RoleConfiguration(ITenantProvider tenantProvider)
+        public RoleConfigration(ITenantProvider tenantProvider)
         {
             _tenantProvider = tenantProvider;
         }

@@ -3,6 +3,7 @@ using FluentValidation.AspNetCore;
 using TrendyApi;
 using Persistence;
 using Application.Features.Authentication.Dtos.Validators;
+using Application.Features.Products.Dtos.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,12 +16,13 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddPersistenceServices(builder.Configuration);
 
-// Add FluentValidation
+// Add FluentValidation from multiple assemblies
 builder.Services.AddValidatorsFromAssembly(typeof(RegisterRequestValidator).Assembly);
 builder.Services.AddFluentValidationAutoValidation();
 
 var app = builder.Build();
 
+// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
