@@ -1,4 +1,5 @@
 ﻿using Application.Contracts.Persistence;
+using Application.Features.Authentication;
 
 namespace Application.Contracts
 {
@@ -7,5 +8,6 @@ namespace Application.Contracts
         Task<int> SaveChangesAsync();
         Lazy<IUserRepository> UserRepository { get; }
         Lazy<IRoleRepository> RoleRepository { get; }
+        Lazy<IPasswordResetTokenRepository> PasswordResetTokenRepository { get; set; }
     }
 }

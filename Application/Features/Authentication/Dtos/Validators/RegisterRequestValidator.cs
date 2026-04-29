@@ -12,6 +12,10 @@ namespace Application.Features.Authentication.Dtos.Validators
                 .NotEmpty()
                 .NotNull();
 
+            RuleFor(s => s.PhoneNumber)
+                .NotEmpty()
+                .NotNull();
+
             RuleFor(s => s.Password)
                 .MinimumLength(8).NotNull().NotEmpty()
                 .Equal(s => s.ConfirmPassword).WithMessage("Passwords do not match");
@@ -20,6 +24,12 @@ namespace Application.Features.Authentication.Dtos.Validators
                 .NotEmpty()
                 .NotNull()
                 .Matches(ValidationRegex.EnglishLetters);
+
+            RuleFor(s => s.FullNameAr)
+                .NotEmpty()
+                .NotNull()
+                .Matches(ValidationRegex.ArabicLetters);
         }
     }
 }
+

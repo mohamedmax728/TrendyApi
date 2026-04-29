@@ -7,5 +7,11 @@ namespace Application.Features.Authentication
     {
         Task<BaseResponse> RegisterAsync(RegisterRequestDto request);
         Task<BaseResponse> LoginAsync(LoginRequestDto request);
+        Task<BaseResponse> VerifyOtpAsync(VerifyOtpRequestDto request);
+        Task<BaseResponse> ResetPasswordAsync(ResetPasswordRequestDto request);
+        Task<BaseResponse> ForgotPasswordAsync(ForgotPasswordRequestDto request);
+
+
+
     }
 }
