@@ -1,7 +1,7 @@
 ﻿using Application.Common.Abstractions;
 using Domain.Common;
-using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Persistence.Configrations;
 using Persistence.Configurations;
 
@@ -10,14 +10,18 @@ namespace Persistence
     public class AppDbContext : DbContext
     {
         public ITenantProvider _tenantProvider;
+        private readonly IConfiguration _configuration;
+
         public AppDbContext()
         {
 
         }
-        public AppDbContext(DbContextOptions<AppDbContext> options, ITenantProvider tenantProvider)
+        public AppDbContext(DbContextOptions<AppDbContext> options, ITenantProvider tenantProvider,
+            IConfiguration configuration)
             : base(options)
         {
             _tenantProvider = tenantProvider;
+            _configuration = configuration;
         }
         public DbSet<Domain.Entities.User> Users { get; set; }
         public DbSet<Domain.Entities.Role> Roles { get; set; }
@@ -28,9 +32,19 @@ namespace Persistence
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer(
-                    "data source=DESKTOP-5RA9U4V\\SQLEXPRESS;integrated security=SSPI;initial catalog=TrndyApiV2;trustservercertificate=True;MultipleActiveResultSets=True;"
-                );
+                // Use connection string from configuration if available, otherwise use fallback
+                var connectionString = _configuration?.GetConnectionString("ConnectionString");
+                if (!string.IsNullOrEmpty(connectionString))
+                {
+                    optionsBuilder.UseSqlServer(connectionString);
+                }
+                else
+                {
+                    // Fallback connection string for development
+                    optionsBuilder.UseSqlServer(
+                        "Server=sqlserver,1433;Database=TaskManagementDb;User Id=sa;Password=TaskMana!1;TrustServerCertificate=True;"
+                    );
+                }
             }
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -44,7 +58,7 @@ namespace Persistence
 
             base.OnModelCreating(modelBuilder);
         }
-       
+
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
         {

@@ -14,11 +14,9 @@ namespace TrendyApi
         {
             services.AddAutoMapper(cfg => cfg.AddMaps(typeof(AuthenticationMapping).Assembly));
             services.AddScoped<IAuthenticationService, AuthenticationService>();
-            services.AddScoped<IEmailService, EmailService>();
             services.Configure<EmailSettings>(
             configuration.GetSection("EmailSettings"));
 
-            services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             // Register validators

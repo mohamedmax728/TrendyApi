@@ -1,12 +1,10 @@
-﻿using Application.Common.Models;
+using Application.Common.Models;
+using Application.Contracts;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Mail;
-using System.Text;
 
-namespace Application.Features.Authentication
+namespace Persistence.Services
 {
     public class EmailService : IEmailService
     {
@@ -38,5 +36,4 @@ namespace Application.Features.Authentication
             await client.SendMailAsync(message);
         }
     }
-
 }

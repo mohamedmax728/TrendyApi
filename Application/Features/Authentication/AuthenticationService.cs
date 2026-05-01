@@ -3,12 +3,12 @@ using Application.Common.Helpers;
 using Application.Common.Responses;
 using Application.Contracts;
 using Application.Features.Authentication.Dtos;
-using Domain.Entities;
 using AutoMapper;
+using Domain.Entities;
 
 namespace Application.Features.Authentication
 {
-    public class AuthenticationService(IUnitOfWork _unitOfWork , IMapper _mapper , IJwtTokenGenerator jwtTokenGenerator ,IEmailService _emailService) : IAuthenticationService
+    public class AuthenticationService(IUnitOfWork _unitOfWork, IMapper _mapper, IJwtTokenGenerator jwtTokenGenerator, IEmailService _emailService) : IAuthenticationService
     {
         public async Task<BaseResponse> RegisterAsync(RegisterRequestDto request)
         {
@@ -67,21 +67,32 @@ namespace Application.Features.Authentication
         }
         public async Task<BaseResponse> LoginAsync(LoginRequestDto request)
         {
-            var user = await _unitOfWork.UserRepository.Value.GetAsync(x => x.Email == request.Email,x=>x.Role);
-            if (user == null)
-                 return new BaseResponse("Email or password is incorrect.", false);
-       
-             var isValid = PasswordMaker.VerifyPassword(request.Password,user.PasswordHash,user.PasswordSalt);     
-             if (!isValid)
-                 return new BaseResponse("Email or password is incorrect.", false);         
-             var token = jwtTokenGenerator.GenerateToken(user);
-             return new BaseResponse<string>
-             {
-                 Success = true,
-                 Message = "Login successful.",
-                 Data = token
-             };
+            try
+            {
+                var user = await _unitOfWork.UserRepository.Value.GetAsync(x => x.Email == request.Email, x => x.Role);
+                if (user == null)
+                    return new BaseResponse("Email or password is incorrect.", false);
 
+                var isValid = PasswordMaker.VerifyPassword(request.Password, user.PasswordHash, user.PasswordSalt);
+                if (!isValid)
+                    return new BaseResponse("Email or password is incorrect.", false);
+                var token = jwtTokenGenerator.GenerateToken(user);
+                return new BaseResponse<string>
+                {
+                    Success = true,
+                    Message = "Login successful.",
+                    Data = token
+                };
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse
+                {
+                    Success = false,
+                    Message = "An error occurred while logging in.",
+                    ValidationErrors = new List<string> { ex.Message }
+                };
+            }
         }
         private async Task<bool> CheckIfEmailOrMobileNumberExists(string email, string mobileNumber)
         {
@@ -95,81 +106,107 @@ namespace Application.Features.Authentication
 
         public async Task<BaseResponse> ResetPasswordAsync(ResetPasswordRequestDto request)
         {
-            if (request.NewPassword != request.ConfirmPassword)
-                return new BaseResponse("Passwords do not match.", false);
+            try
+            {
+                if (request.NewPassword != request.ConfirmPassword)
+                    return new BaseResponse("Passwords do not match.", false);
 
-            // 1. تتحقق من الـ OTP
-            var resetToken = await _unitOfWork.PasswordResetTokenRepository.Value
-                .GetAsync(x => x.User.Email == request.Email
-                            && x.OTP == request.OTP
-                            && !x.IsUsed
-                            && x.ExpiresAt > DateTime.UtcNow);
+                var resetToken = await _unitOfWork.PasswordResetTokenRepository.Value
+                    .GetAsync(x => x.User.Email == request.Email
+                                && x.OTP == request.OTP
+                                && !x.IsUsed
+                                && x.ExpiresAt > DateTime.UtcNow);
 
-            if (resetToken == null)
-                return new BaseResponse("Invalid or expired OTP.", false);
+                if (resetToken == null)
+                    return new BaseResponse("Invalid or expired OTP.", false);
 
-            // 2. جيب الـ User
-            var user = await _unitOfWork.UserRepository.Value
-                .GetAsync(x => x.Email == request.Email);
+                var user = await _unitOfWork.UserRepository.Value
+                    .GetAsync(x => x.Email == request.Email);
 
-            // 3. عمل Hash للـ Password الجديد
-            PasswordMaker.CreatePasswordHash(request.NewPassword, out byte[] hash, out byte[] salt);
-            user.PasswordHash = hash;
-            user.PasswordSalt = salt;
+                PasswordMaker.CreatePasswordHash(request.NewPassword, out byte[] hash, out byte[] salt);
+                user.PasswordHash = hash;
+                user.PasswordSalt = salt;
 
-            // 4. حدث الـ User
-            await _unitOfWork.UserRepository.Value.UpdateAsync(user);
+                await _unitOfWork.UserRepository.Value.UpdateAsync(user);
 
-            // 5. اعمل الـ OTP used
-            resetToken.IsUsed = true;
-            await _unitOfWork.PasswordResetTokenRepository.Value.UpdateAsync(resetToken);
+                resetToken.IsUsed = true;
+                await _unitOfWork.PasswordResetTokenRepository.Value.UpdateAsync(resetToken);
 
-            return new BaseResponse("Password reset successfully.");
+                return new BaseResponse("Password reset successfully.");
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse
+                {
+                    Success = false,
+                    Message = "An error occurred while resetting password.",
+                    ValidationErrors = new List<string> { ex.Message }
+                };
+            }
         }
 
         public async Task<BaseResponse> VerifyOtpAsync(VerifyOtpRequestDto request)
         {
-            // 1. جيب الـ OTP من الداتابيز
-            var resetToken = await _unitOfWork.PasswordResetTokenRepository.Value
-                .GetAsync(x => x.User.Email == request.Email
-                            && x.OTP == request.OTP
-                            && !x.IsUsed
-                            && x.ExpiresAt > DateTime.UtcNow);
+            try
+            {
+                var resetToken = await _unitOfWork.PasswordResetTokenRepository.Value
+                    .GetAsync(x => x.User.Email == request.Email
+                                && x.OTP == request.OTP
+                                && !x.IsUsed
+                                && x.ExpiresAt > DateTime.UtcNow);
 
-            if (resetToken == null)
-                return new BaseResponse("Invalid or expired OTP.", false);
+                if (resetToken == null)
+                    return new BaseResponse("Invalid or expired OTP.", false);
 
-            return new BaseResponse("OTP is valid.");
+                return new BaseResponse("OTP is valid.");
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse
+                {
+                    Success = false,
+                    Message = "An error occurred while verifying OTP.",
+                    ValidationErrors = new List<string> { ex.Message }
+                };
+            }
         }
 
         public async Task<BaseResponse> ForgotPasswordAsync(ForgotPasswordRequestDto request)
         {
-            // 1. تتحقق إن الـ Email موجود
-            var user = await _unitOfWork.UserRepository.Value
-                .GetAsync(x => x.Email == request.Email);
-
-            if (user == null)
-                return new BaseResponse("Email not found.", false);
-
-            // 2. تعمل OTP
-            var otp = new Random().Next(100000, 999999).ToString();
-
-            // 3. تحفظه في الداتابيز
-            var resetToken = new PasswordResetToken
+            try
             {
-                UserId = user.Id,
-                OTP = otp,
-                ExpiresAt = DateTime.UtcNow.AddMinutes(10),
-                IsUsed = false,
-                CompanyId = user.CompanyId
-            };
+                var user = await _unitOfWork.UserRepository.Value
+                    .GetAsync(x => x.Email == request.Email);
 
-            await _unitOfWork.PasswordResetTokenRepository.Value.AddAsync(resetToken);
+                if (user == null)
+                    return new BaseResponse("Email not found.", false);
 
-            // 4. تبعت الإيميل
-            await _emailService.SendAsync(user.Email, "Password Reset OTP", $"Your OTP is: {otp}");
+                var otp = new Random().Next(100000, 999999).ToString();
 
-            return new BaseResponse("OTP sent to your email.");
+                var resetToken = new PasswordResetToken
+                {
+                    UserId = user.Id,
+                    OTP = otp,
+                    ExpiresAt = DateTime.UtcNow.AddMinutes(10),
+                    IsUsed = false,
+                    CompanyId = user.CompanyId
+                };
+
+                await _unitOfWork.PasswordResetTokenRepository.Value.AddAsync(resetToken);
+
+                await _emailService.SendAsync(user.Email, "Password Reset OTP", $"Your OTP is: {otp}");
+
+                return new BaseResponse("OTP sent to your email.");
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse
+                {
+                    Success = false,
+                    Message = "An error occurred while processing forgot password.",
+                    ValidationErrors = new List<string> { ex.Message }
+                };
+            }
         }
     }
 }

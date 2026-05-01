@@ -13,7 +13,16 @@ namespace Persistence.Identity
                 .User
                 .FindFirst("companyId");
 
-            CompanyId = int.Parse(claim!.Value);
+            if (claim != null && !string.IsNullOrEmpty(claim.Value) && int.TryParse(claim.Value, out var companyId))
+            {
+                CompanyId = companyId;
+            }
+            else
+            {
+                // Default to CompanyId 1 when no valid claim is found
+                // This handles cases like user registration where there's no auth context yet
+                CompanyId = 1;
+            }
         }
     }
 }

@@ -8,12 +8,9 @@ namespace Application.Features.Authentication.Dtos.Mapping
         public AuthenticationMapping()
         {
             CreateMap<RegisterRequestDto, User>()
-           .ForMember(dest => dest.MobileNumber, opt => opt.MapFrom(src => src.PhoneNumber))
-           .ForMember(dest => dest.PasswordHash, opt => opt.Ignore())
-           .ForMember(dest => dest.PasswordSalt, opt => opt.Ignore())
-           .ForMember(dest => dest.Role, opt => opt.Ignore())
-           .ForMember(dest => dest.RoleId, opt => opt.Ignore());
+                .ForMember(dest => dest.MobileNumber, opt => opt.MapFrom(src => src.PhoneNumber));
 
+            CreateMap<User, LoginRequestDto>().ReverseMap();
         }
     }
 }

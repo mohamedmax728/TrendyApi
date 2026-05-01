@@ -3,8 +3,9 @@ using Application.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Persistence.Repositories;
+using Persistence.Identity;
 using Persistence.Security;
+using Persistence.Services;
 
 namespace Persistence
 {
@@ -17,6 +18,8 @@ namespace Persistence
                     configuration.GetConnectionString("ConnectionString"),
                     b => b.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName)));
             services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+            services.AddScoped<ITenantProvider, TenantProvider>();
+            services.AddScoped<IEmailService, EmailService>();
 
             return services;
         }

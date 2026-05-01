@@ -1,0 +1,32 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=TaskMana!1
+      - MSSQL_PID=Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P TaskMana!1 -Q 'SELECT 1' -C"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  trendyapi:
+    build: ./TrendyApi
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_URLS=http://+:8080
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    volumes:
+      - ./TrendyApi/appsettings.json:/app/appsettings.json:ro
+
+volumes:
+  sqlserver_data:
