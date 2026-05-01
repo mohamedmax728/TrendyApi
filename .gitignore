@@ -361,3 +361,4 @@ MigrationBackup/
 .kilo/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/.kilo/plans/1777165384676-calm-eagle.md
